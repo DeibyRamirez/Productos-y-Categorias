@@ -4,9 +4,12 @@ use App\Http\Controllers\ApiCategoriasController;
 use App\Http\Controllers\ApiProductoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 
 use App\Http\Controllers\ProductosControllerApi;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,11 +25,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+ 
+Route::middleware('auth:api')->group( function() {
+    Route::apiResource('productos', ApiProductoController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy'
+    ]);
+    
+    Route::apiResource('categorias', ApiCategoriasController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy'
+    ]);
 
-Route::apiResource('productos', ApiProductoController::class)->only([
-    'index', 'show', 'store', 'update', 'destroy'
-]);
+});
 
-Route::apiResource('categorias', ApiCategoriasController::class)->only([
-    'index', 'show', 'store', 'update', 'destroy'
-]);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/registro', [AuthController::class, 'registro']);
